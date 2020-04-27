@@ -1,0 +1,10 @@
+[Unit]
+Description=Template daemon
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/lxd
+
+[Install]
+WantedBy=multi-user.target
+
