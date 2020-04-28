@@ -14,9 +14,11 @@ SOVERSION    = 1
 
 CFLAGS	+= -O3 -Wall -pthread
 
+PROGRAM = linux_daemon
+
 LIB      = 
 
-ALL     = $(LIB) lxd
+ALL     = $(LIB) $(PROGRAM)
 
 prefix = /usr/local
 exec_prefix = $(prefix)
@@ -29,9 +31,9 @@ all:	$(ALL)
 
 lib:	$(LIB)
 
-lxd:	lxd.o
-	$(CC) -o lxd lxd.o -L. -pthread
-	$(STRIP) lxd
+$(PROGRAM):	linux_daemon.o
+	$(CC) -o $(PROGRAM) linux_daemon.o -L. -pthread
+	$(STRIP) $(PROGRAM)
 
 clean:
 	rm -f *.o *.i *.s *~ $(ALL) *.so.$(SOVERSION)
@@ -42,8 +44,8 @@ else
   PYINSTALLARGS = --root=$(DESTDIR)
 endif
 
-install:	$(ALL)
-	install -m 0755 lxd                        $(DESTDIR)$(bindir)
+install: $(ALL)
+	install -m 0755 $(PROGRAM)                      $(DESTDIR)$(bindir)
 	if which python2; then python2 setup.py install $(PYINSTALLARGS); fi
 	if which python3; then python3 setup.py install $(PYINSTALLARGS); fi
 ifeq ($(DESTDIR),)
@@ -51,13 +53,13 @@ ifeq ($(DESTDIR),)
 endif
 
 uninstall:
-	rm -f $(DESTDIR)$(bindir)/lxd
-	if which python2; then python2 setup.py install $(PYINSTALLARGS) --record /tmp/pigpio >/dev/null; sed 's!^!$(DESTDIR)!' < /tmp/pigpio | xargs rm -f >/dev/null; fi
-	if which python3; then python3 setup.py install $(PYINSTALLARGS) --record /tmp/pigpio >/dev/null; sed 's!^!$(DESTDIR)!' < /tmp/pigpio | xargs rm -f >/dev/null; fi
+	rm -f $(DESTDIR)$(bindir)/$(PROGRAM)
+	if which python2; then python2 setup.py install $(PYINSTALLARGS) --record /tmp/$(PROGRAM) >/dev/null; sed 's!^!$(DESTDIR)!' < /tmp/pigpio | xargs rm -f >/dev/null; fi
+	if which python3; then python3 setup.py install $(PYINSTALLARGS) --record /tmp/$(PROGRAM) >/dev/null; sed 's!^!$(DESTDIR)!' < /tmp/pigpio | xargs rm -f >/dev/null; fi
 ifeq ($(DESTDIR),)
 	ldconfig
 endif
 
 # generated using gcc -MM *.c
 
-lxd.o: lxd.c
+linux_daemon.o: linux_daemon.c
