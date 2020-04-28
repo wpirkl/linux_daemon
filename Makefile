@@ -30,8 +30,8 @@ all:	$(ALL)
 lib:	$(LIB)
 
 lxd:	lxd.o
-	$(CC) -o pigpiod pigpiod.o -L. -pthread
-	$(STRIP) pigpiod
+	$(CC) -o lxd lxd.o -L. -pthread
+	$(STRIP) lxd
 
 clean:
 	rm -f *.o *.i *.s *~ $(ALL) *.so.$(SOVERSION)
