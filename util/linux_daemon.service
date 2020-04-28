@@ -3,7 +3,7 @@ Description=Template daemon
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/lxd
+ExecStart=/usr/bin/linux_daemon
 
 [Install]
 WantedBy=multi-user.target

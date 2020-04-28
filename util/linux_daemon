@@ -1,12 +1,12 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:             lxd
+# Provides:             linux_daemon
 # Required-Start:
 # Required-Stop:
 # Default-Start:        2 3 4 5
 # Default-Stop:         0 1 6 
-# Short-Description:    lxd daemon
-# Description:          lxd daemon template $
+# Short-Description:    linux daemon
+# Description:          linux daemon template $
 ### END INIT INFO
 
 # Actions
@@ -15,10 +15,10 @@ case "$1" in
     lxd
     ;;
   stop)
-    pkill lxd
+    pkill linux_daemon
     ;;
   restart)
-    pkill lxd
+    pkill linux_daemon
     lxd
     ;;
   *)
