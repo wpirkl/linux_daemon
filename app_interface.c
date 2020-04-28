@@ -8,7 +8,8 @@
 int app_main(int argc, char* argv[])
 {
 
-    printf("Hello World\n");
+    printf("Hello World on stdout!\n");
+    fprintf(stderr, "Hello World on stderr!\n");
 
     return 0;
 }

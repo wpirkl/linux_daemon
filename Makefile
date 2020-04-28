@@ -12,12 +12,6 @@ STRIPLIB     = $(STRIP) --strip-unneeded
 
 SOVERSION    = 1
 
-CFLAGS	 = -O3
-CFLAGS  += -Wall
-CFLAGS  += -pthread
-
-CPPFLAGS = $(CFLAGS) -lgcc
-
 PROGRAM = linux_daemon
 
 LIB     = 
@@ -26,6 +20,14 @@ ALL     = $(LIB) $(PROGRAM)
 
 OBJS   += linux_daemon.o
 OBJS   += app_interface.o
+
+
+CFLAGS  += -O3
+CFLAGS  += -Wall
+CFLAGS  += -pthread
+CFLAGS  += -DPROGRAM=$(PROGRAM)
+
+CPPFLAGS = $(CFLAGS) -lgcc
 
 prefix = /usr/local
 exec_prefix = $(prefix)

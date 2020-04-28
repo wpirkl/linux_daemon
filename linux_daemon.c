@@ -4,8 +4,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include <unistd.h>
+
+#include <syslog.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -50,6 +53,9 @@ static void init_opts(int argc, char * argv[])
 
 int main(int argc, char **argv)
 {
+    FILE *f = NULL;
+    int fn = 0;
+    int app_ret = EXIT_SUCCESS;
 
     init_opts(argc, argv);
 
@@ -84,10 +90,25 @@ int main(int argc, char **argv)
         if ((chdir("/")) < 0) fatal("chdir failed (%m)");
 
         /* Close out the standard file descriptors */
+        setbuf (stdout,NULL);
 
-        fclose(stdin);
-        fclose(stdout);
+        f = popen("logger", "w");
+        if(!f) { exit(EXIT_FAILURE); }
+
+        fn = fileno(f);
+        dup2(fn, STDOUT_FILENO);
+        dup2(fn, STDERR_FILENO);
+
+        // fclose(stdin);
+        // fclose(stdout);
     }
 
-    return app_main(argc, argv);
+    app_ret = app_main(argc, argv);
+
+    if(!foreground)
+    {
+        pclose(f);
+    }
+
+    return app_ret;
 }
