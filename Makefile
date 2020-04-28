@@ -1,7 +1,7 @@
 #
 # Set CROSS_PREFIX to prepend to all compiler tools at once for easier
 # cross-compilation.
-CROSS_PREFIX =
+CROSS_PREFIX ?=
 CC           = $(CROSS_PREFIX)gcc
 AR           = $(CROSS_PREFIX)ar
 RANLIB       = $(CROSS_PREFIX)ranlib
@@ -10,22 +10,19 @@ STRIP        = $(CROSS_PREFIX)strip
 SHLIB        = $(CC) -shared
 STRIPLIB     = $(STRIP) --strip-unneeded
 
-SOVERSION    = 1
+SOVERSION ?= 1
 
-PROGRAM = linux_daemon
+PROGRAM ?= linux_daemon
 
-LIB     = 
-
-ALL     = $(LIB) $(PROGRAM)
+LIB     ?= $(PROGRAM).so.$(SOVERSION)
 
 OBJS   += linux_daemon.o
 OBJS   += app_interface.o
 
-
 CFLAGS  += -O3
 CFLAGS  += -Wall
-CFLAGS  += -pthread
 CFLAGS  += -DPROGRAM=$(PROGRAM)
+CFLAGS  += -I.
 
 CPPFLAGS = $(CFLAGS) -lgcc
 
@@ -36,16 +33,16 @@ includedir = $(prefix)/include
 libdir = $(prefix)/lib
 mandir = $(prefix)/man
 
-all:	$(ALL)
+all: $(PROGRAM)
 
-lib:	$(LIB)
+lib: $(LIB)
 
 $(PROGRAM): $(OBJS)
-	$(CC) -o $(PROGRAM) $(OBJS) -L. -pthread
+	$(CC) -o $(PROGRAM) $(OBJS) $(CFLAGS)
 	$(STRIP) $(PROGRAM)
 
 clean:
-	rm -f *.o *.i *.s *~ $(ALL) *.so.$(SOVERSION) *.dep
+	rm -f $(LIB) $(PROGRAM) $(OBJS) $(OBJS:.o=.dep)
 
 ifeq ($(DESTDIR),)
   PYINSTALLARGS =
@@ -74,4 +71,4 @@ endif
 %.o : %.c
 	$(CC) $(CFLAGS) -c -o $@ -MMD -MP -MF $(@:.o=.dep) $<
 
--include $(wildcard *.dep)
+-include $(wildcard $(OBJS:.o=*.dep))
