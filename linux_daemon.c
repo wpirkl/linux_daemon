@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "app_interface.h"
 
 static bool foreground = false;
 
@@ -31,12 +32,31 @@ void fatal(char *fmt, ...)
 }
 
 
+static void init_opts(int argc, char * argv[])
+{
+    int opt;
+
+    while((opt = getopt(argc, argv, "g")) != -1)
+    {
+        switch(opt)
+        {
+            case 'g':
+                foreground = 1;
+                break;
+        }
+    }
+}
+
+
 int main(int argc, char **argv)
 {
 
-    pid_t pid;
+    init_opts(argc, argv);
 
     if(!foreground) {
+
+        pid_t pid;
+
         /* Fork off the parent process */
 
         pid = fork();
@@ -69,5 +89,5 @@ int main(int argc, char **argv)
         fclose(stdout);
     }
 
-    return 0;
+    return app_main(argc, argv);
 }

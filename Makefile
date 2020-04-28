@@ -12,13 +12,20 @@ STRIPLIB     = $(STRIP) --strip-unneeded
 
 SOVERSION    = 1
 
-CFLAGS	+= -O3 -Wall -pthread
+CFLAGS	 = -O3
+CFLAGS  += -Wall
+CFLAGS  += -pthread
+
+CPPFLAGS = $(CFLAGS) -lgcc
 
 PROGRAM = linux_daemon
 
-LIB      = 
+LIB     = 
 
 ALL     = $(LIB) $(PROGRAM)
+
+OBJS   += linux_daemon.o
+OBJS   += app_interface.o
 
 prefix = /usr/local
 exec_prefix = $(prefix)
@@ -31,12 +38,12 @@ all:	$(ALL)
 
 lib:	$(LIB)
 
-$(PROGRAM):	linux_daemon.o
-	$(CC) -o $(PROGRAM) linux_daemon.o -L. -pthread
+$(PROGRAM): $(OBJS)
+	$(CC) -o $(PROGRAM) $(OBJS) -L. -pthread
 	$(STRIP) $(PROGRAM)
 
 clean:
-	rm -f *.o *.i *.s *~ $(ALL) *.so.$(SOVERSION)
+	rm -f *.o *.i *.s *~ $(ALL) *.so.$(SOVERSION) *.dep
 
 ifeq ($(DESTDIR),)
   PYINSTALLARGS =
@@ -62,4 +69,7 @@ endif
 
 # generated using gcc -MM *.c
 
-linux_daemon.o: linux_daemon.c
+%.o : %.c
+	$(CC) $(CFLAGS) -c -o $@ -MMD -MP -MF $(@:.o=.dep) $<
+
+-include $(wildcard *.dep)
